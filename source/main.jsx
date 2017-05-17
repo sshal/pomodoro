@@ -1,5 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Comp from './components/Comp.jsx';
+import ClockApp from './components/ClockApp.jsx';
 
-ReactDOM.render(<Comp />, document.getElementById('main'));
+ReactDOM.render(<ClockApp />, document.getElementById('main'));

@@ -20810,6 +20810,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Timer = require('./Timer.jsx');
+
+var _Timer2 = _interopRequireDefault(_Timer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20818,32 +20822,218 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Comp = function (_React$Component) {
-    _inherits(Comp, _React$Component);
+var ClockApp = function (_React$Component) {
+    _inherits(ClockApp, _React$Component);
 
-    function Comp(props) {
-        _classCallCheck(this, Comp);
+    function ClockApp(props) {
+        _classCallCheck(this, ClockApp);
 
-        return _possibleConstructorReturn(this, (Comp.__proto__ || Object.getPrototypeOf(Comp)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ClockApp.__proto__ || Object.getPrototypeOf(ClockApp)).call(this, props));
+
+        _this.init = {
+            work: 25,
+            rest: 5
+        };
+        _this.time = {
+            id: 0,
+            min: 0,
+            sec: 59,
+            worktime: true
+        };
+        _this.view = 25;
+        _this.startCounter = _this.startCounter.bind(_this);
+        _this.pauseCounter = _this.pauseCounter.bind(_this);
+        _this.initCounts = _this.initCounts.bind(_this);
+        return _this;
     }
 
-    _createClass(Comp, [{
+    _createClass(ClockApp, [{
+        key: 'startCounter',
+        value: function startCounter() {
+            document.getElementById('start').classList.add('hide');
+            document.getElementById('pause').classList.remove('hide');
+            document.getElementById('defence').classList.remove('hide');
+            if (!this.time.id) {
+                this.time.min = this.init.work - 1;
+                this.view = this.time.min + ' : ' + this.time.sec;
+            }
+            (function countTime(obj) {
+                obj.time.id = setInterval(function () {
+                    var sec = Number.parseInt(obj.time.sec);
+                    if (sec === 0 && obj.time.min === 0) {
+                        var style = document.getElementById('timeview').classList;
+                        obj.time.worktime ? (obj.time.min = obj.init.rest, obj.time.worktime = false, style.remove('working'), style.add('holiday')) : (obj.time.min = obj.init.work, obj.time.worktime = true, style.add('working'), style.remove('holiday'));
+                    } else if (sec === 0 && obj.time.min !== 0) {
+                        obj.time.min -= 1;
+                        obj.time.sec = 59;
+                    } else {
+                        sec -= 1;
+                        obj.time.sec = sec < 10 ? "0" + sec : sec;
+                    }
+                    obj.view = obj.time.min + ' : ' + obj.time.sec;
+                    obj.setState({});
+                }, 1000);
+            })(this);
+            this.setState({});
+        }
+    }, {
+        key: 'pauseCounter',
+        value: function pauseCounter() {
+            document.getElementById('pause').classList.add('hide');
+            document.getElementById('start').classList.remove('hide');
+            document.getElementById('defence').classList.add('hide');
+            clearInterval(this.time.id);
+        }
+    }, {
+        key: 'initCounts',
+        value: function initCounts() {
+            this.time = {
+                id: 0,
+                min: 0,
+                sec: 59,
+                worktime: true
+            };
+            this.init.work = this.refs.job.count;
+            this.init.rest = this.refs.relax.count;
+            this.view = this.init.work;
+            document.getElementById('timeview').classList.remove('holiday');
+            document.getElementById('timeview').classList.add('working');
+            this.setState({});
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                null,
-                'Example'
+                { className: 'rel' },
+                _react2.default.createElement(
+                    'div',
+                    { id: 'head' },
+                    'Pomodoro'
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'timeview', className: 'working' },
+                    this.view
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'work', className: 'half inlblock', onClick: this.initCounts },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'title' },
+                        'work hard'
+                    ),
+                    _react2.default.createElement(_Timer2.default, { ref: 'job', name: 'w' })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'rest', className: 'half inlblock', onClick: this.initCounts },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'title' },
+                        'take a break'
+                    ),
+                    _react2.default.createElement(_Timer2.default, { ref: 'relax' })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'button',
+                        { id: 'start', onClick: this.startCounter },
+                        'start'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { id: 'pause', className: 'hide', onClick: this.pauseCounter },
+                        'pause'
+                    )
+                ),
+                _react2.default.createElement('div', { id: 'defence', className: 'hide' })
             );
         }
     }]);
 
-    return Comp;
+    return ClockApp;
 }(_react2.default.Component);
 
-module.exports = Comp;
+module.exports = ClockApp;
 
-},{"react":181}],183:[function(require,module,exports){
+},{"./Timer.jsx":183,"react":181}],183:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Timer = function (_React$Component) {
+    _inherits(Timer, _React$Component);
+
+    function Timer(props) {
+        _classCallCheck(this, Timer);
+
+        var _this = _possibleConstructorReturn(this, (Timer.__proto__ || Object.getPrototypeOf(Timer)).call(this, props));
+
+        _this.count = _this.props.name === "w" ? 25 : 5;
+        _this.increaseCount = _this.increaseCount.bind(_this);
+        _this.decreaseCount = _this.decreaseCount.bind(_this);
+        return _this;
+    }
+
+    _createClass(Timer, [{
+        key: "increaseCount",
+        value: function increaseCount() {
+            this.count += 1;
+            this.setState({});
+        }
+    }, {
+        key: "decreaseCount",
+        value: function decreaseCount() {
+            this.count === 1 ? -1 : this.count -= 1;
+            this.setState({});
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "span",
+                null,
+                _react2.default.createElement(
+                    "button",
+                    { className: "point minus", onClick: this.decreaseCount },
+                    "\u21E9"
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "inlblock num" },
+                    this.count
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { className: "point plus", onClick: this.increaseCount },
+                    "\u21E7"
+                )
+            );
+        }
+    }]);
+
+    return Timer;
+}(_react2.default.Component);
+
+module.exports = Timer;
+
+},{"react":181}],184:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -20854,12 +21044,12 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _Comp = require('./components/Comp.jsx');
+var _ClockApp = require('./components/ClockApp.jsx');
 
-var _Comp2 = _interopRequireDefault(_Comp);
+var _ClockApp2 = _interopRequireDefault(_ClockApp);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_reactDom2.default.render(_react2.default.createElement(_Comp2.default, null), document.getElementById('main'));
+_reactDom2.default.render(_react2.default.createElement(_ClockApp2.default, null), document.getElementById('main'));
 
-},{"./components/Comp.jsx":182,"react":181,"react-dom":30}]},{},[183]);
+},{"./components/ClockApp.jsx":182,"react":181,"react-dom":30}]},{},[184]);
